@@ -1,0 +1,17 @@
+import React, {useContext} from "react";
+// import Header from ""
+import {UserContext} from "./context";
+import Header from "./Header";
+
+const Screen = () => {
+    const {logUserIn} = useContext(UserContext);
+    return (
+        <div>
+            <Header />
+            <h1>First Screen</h1>
+            <button onClick={logUserIn}>Log User In</button>
+        </div>
+    )
+};
+
+export default Screen;
