@@ -1,33 +1,52 @@
-import React, {useReducer} from 'react';
-import UserContextProvider from './context';
+import React, {useReducer, useState} from 'react';
+import UserContextProvider, { useSetLang } from './context';
 import Screen from './Screen';
 import translation from "./translation";
 
-const INCREMENT = "increment";
-const DECREMENT = "decrement";
+const initialState = {
+  toDos: []
+};
+
+const ADD = "add";
 
 const reducer = (state, action) => {
   switch(action.type) {
-    case INCREMENT:
-      return {count: state.count + 1}
-    case DECREMENT:
-      return {count: state.count - 1}
+    case ADD:
+      return {toDos: [...state.toDos, {text: action.payload}]}
     default:
-      throw new Error();
+      return;
   }
 }
 
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, {count: 0});
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [newToDo, setNewToDo] = useState("");
+  const onSumbit = e => {
+    e.preventDefault();
+    dispatch({type: ADD, payload: newToDo});
+  };
+  const onChange = e => {
+    const {
+      target : {value}
+    } = e;
+    setNewToDo(value);
+  };
   return (
     <>
     <UserContextProvider defaultLang="en" translation={translation}>
       <Screen />
     </UserContextProvider>
-    <h1>{state.count}</h1>
-    <button onClick={() =>dispatch({type: INCREMENT})}>INCREMENT</button>
-    <button onClick={() =>dispatch({type: DECREMENT})}>DECREMENT</button>
+    <h1>Add to do </h1>
+    <form onSubmit={onSumbit}>
+      <input
+        value={newToDo}
+        type="text"
+        placeholder="Write to do"
+        onChange={onChange}
+      />
+    </form>
+    <h4>{state.toDos.map(todo => <li>{todo.text}</li>)}</h4>
     </>
   )
 }
